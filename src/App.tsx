@@ -67,7 +67,7 @@ export default function App() {
 
   const ctx: Ctx = {
     state,
-    notify: (kind, text) => setNotice({ kind, text }),
+    notify: setNotice,
     commit: (next, okText) => {
       try {
         save(next)

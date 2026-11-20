@@ -98,7 +98,10 @@ export function formatSize(bytes: number): string {
 /** Alasan penolakan file dashboard, atau null bila valid. `text` boleh kosong bila file terlalu besar untuk dibaca. */
 export function fileError(name: string, size: number, text: string): string | null {
   if (!/\.html?$/i.test(name)) return `File "${name}" ditolak: hanya file berekstensi .html atau .htm yang diterima.`
-  if (size > MAX_FILE_BYTES) return `File "${name}" ditolak: ukurannya ${formatSize(size)}, melebihi batas 500 KB.`
+  if (size > MAX_FILE_BYTES) {
+    const bytes = (n: number) => `${n.toLocaleString('id-ID')} byte`
+    return `File "${name}" ditolak: ukurannya ${bytes(size)}, melebihi batas 500 KB (${bytes(MAX_FILE_BYTES)}).`
+  }
   if (size === 0 || text.trim() === '') return `File "${name}" ditolak: file kosong.`
   return null
 }

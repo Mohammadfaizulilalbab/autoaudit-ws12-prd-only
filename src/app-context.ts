@@ -6,7 +6,7 @@ export type Ctx = {
   state: State
   /** Simpan ke localStorage dulu; state hanya berubah bila penyimpanan berhasil. */
   commit: (next: State, okText: string) => boolean
-  notify: (kind: Notice['kind'], text: string) => void
+  notify: (notice: Notice | null) => void
 }
 
 export const AppCtx = createContext<Ctx>(null!)

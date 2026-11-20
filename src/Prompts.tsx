@@ -56,7 +56,7 @@ export function PromptEdit({ prompt: p }: { prompt: Prompt }) {
     const next = applyChange(state, {
       kind: 'prompt', id: p.id, snap: { title: name.trim(), content }, action: 'disimpan', now: new Date().toISOString(),
     })
-    if (!next) return notify('info', 'Tidak ada perubahan: nama dan isi sama persis dengan yang tersimpan, jadi tidak ada revisi baru.')
+    if (!next) return notify({ kind: 'info', text: 'Tidak ada perubahan: nama dan isi sama persis dengan yang tersimpan, jadi tidak ada revisi baru.' })
     const seq = revisionsOf(next, 'prompt', p.id)[0].seq
     if (commit(next, `Perubahan disimpan sebagai revisi #${seq}. ${auditImpactMessage(next, p.id)}`)) setName(name.trim())
   }

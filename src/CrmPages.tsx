@@ -67,10 +67,11 @@ function VersionCard({ page, version: v }: { page: CrmPage; version: Version }) 
     if (!file) return
     const text = file.size <= MAX_FILE_BYTES ? await file.text() : ''
     const error = fileError(file.name, file.size, text)
-    if (error) return notify('error', error)
+    if (error) return notify({ kind: 'error', text: error })
     if (file.name === v.fileName && text === v.fileContent) {
-      return notify('info', `Tidak ada perubahan: "${file.name}" sama persis dengan file ${label} saat ini, jadi tidak ada revisi baru.`)
+      return notify({ kind: 'info', text: `Tidak ada perubahan: "${file.name}" sama persis dengan file ${label} saat ini, jadi tidak ada revisi baru.` })
     }
+    notify(null) // pesan file sebelumnya tidak relevan lagi
     setPending({ name: file.name, size: file.size, content: text })
   }
 
@@ -79,7 +80,7 @@ function VersionCard({ page, version: v }: { page: CrmPage; version: Version }) 
     const next = applyChange(state, {
       kind: 'versi', id: v.id, snap: { title: p.name, content: p.content }, action: 'diunggah', now: new Date().toISOString(),
     })
-    if (!next) return notify('info', `Tidak ada perubahan pada ${label}.`)
+    if (!next) return notify({ kind: 'info', text: `Tidak ada perubahan pada ${label}.` })
     commit(next, `File ${label} ${page.name} berhasil diganti dengan "${p.name}". File lama "${v.fileName}" tersimpan di riwayat sebagai revisi #${lastSeq}.`)
   }
 

@@ -78,3 +78,26 @@ Bagian ini ditulis agent setiap selesai satu iterasi: waktu, tujuan, file yang b
   - Modal memakai elemen `<dialog>` bawaan browser (showModal) untuk menahan fokus dan menutup dengan Esc.
 - Masalah: tidak ada yang menghambat. Satu baris di diff.ts sempat ditulis terlalu ringkas lalu diperjelas sebelum build.
 - Hasil build/test: `npm run build` lolos (tsc tanpa error, bundel JS 248,6 kB / gzip 77,6 kB). `npm test` lolos 11 dari 11 test (diff, validasi file, revisi, pengembalian, pesan audit, data contoh). Tampilan belum diperiksa di browser.
+
+### Iterasi 2: pemeriksaan di browser dan perbaikan temuan
+
+- Mulai: 2026-11-21 02:24
+- Selesai: 2026-11-21 02:26
+- Tujuan: menguji semua alur di browser (dev server port 5181, tab sendiri di panel browser Claude) pada lebar desktop dan 360 px, lalu memperbaiki yang ditemukan.
+- Yang diuji dan hasilnya:
+  - Upload ke v2 (Published): ringkasan tampil dengan peringatan tayang; tombol konfirmasi merah dan nonaktif sampai "v2" diketik ("v3" tetap nonaktif, "V2" diterima); Esc menutup tanpa mengubah apa pun (localStorage masih kosong); setelah konfirmasi kartu dan pesan berhasil diperbarui.
+  - Penolakan file: .txt, file 0 byte, file berisi spasi saja, dan file 500 KB + 1 byte ditolak dengan alasan; file tepat 500 KB diterima; file yang sama persis memunculkan "Tidak ada perubahan" tanpa revisi baru.
+  - Riwayat versi: perbandingan menandai + dan −; Kembalikan revisi #2 pada Published meminta ketik nomor versi dan membuat revisi #4 "dikembalikan dari revisi #2" tanpa menghapus revisi lama.
+  - Saved Prompt: daftar menampilkan jumlah audit dan "Tidak dipakai audit" untuk PRM-1002; nama hanya spasi ditolak dan fokus pindah ke kolom; simpan tanpa perubahan tidak membuat revisi; simpan isi baru menampilkan pesan yang menyebut 2 audit beserta jadwalnya.
+  - Muat ulang halaman di rute #/riwayat/versi/ver-2: data dan rute tetap.
+  - Atur ulang data contoh: konfirmasi tampil, data kembali ke keadaan awal (10 revisi).
+  - Simulasi kuota penuh (setItem melempar error): muncul pesan gagal, kartu dan data tersimpan tidak berubah.
+  - Lebar 360 px: tidak ada scroll horizontal di 9 rute (scrollWidth = 360); modal bisa digulir.
+- Masalah yang ditemukan dan diperbaiki:
+  - Pesan file 500 KB + 1 byte terbaca "ukurannya 500 KB, melebihi batas 500 KB" karena pembulatan. Sekarang menyebut byte: "512.001 byte, melebihi batas 500 KB (512.000 byte)".
+  - Pesan penolakan file sebelumnya tetap tampil saat ringkasan file berikutnya terbuka. `notify` sekarang menerima `null` dan pesan lama dihapus saat ringkasan dibuka.
+  - Label dan nilai di kartu versi terlalu sempit (kolom berdampingan). Label sekarang di atas nilai; ringkasan di modal bertumpuk pada lebar ≤ 480 px; lencana status boleh terbungkus sehingga tidak melewati tepi.
+  - Judul tombol revisi ("Revisi #3" dan jenis aksi) terpecah dua baris; sekarang satu baris.
+- Belum diperbaiki (dinilai kecil): setelah Kembalikan, tombol pembukanya menjadi nonaktif sehingga fokus keyboard kembali ke awal halaman, bukan ke tombol.
+- File yang berubah: src/app-context.ts, src/App.tsx, src/CrmPages.tsx, src/Prompts.tsx, src/History.tsx, src/store.ts, src/styles.css, LOG-EKSPERIMEN.md.
+- Hasil build/test: `npm run build` lolos, `npm test` lolos 11 dari 11.

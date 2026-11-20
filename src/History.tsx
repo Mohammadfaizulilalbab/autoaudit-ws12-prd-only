@@ -30,7 +30,7 @@ export function History({ kind, id }: { kind: Kind; id: string }) {
   function restore() {
     setConfirming(false)
     const next = restoreRevision(state, sel, new Date().toISOString())
-    if (!next) return notify('info', 'Tidak ada perubahan: isi revisi ini sama dengan isi saat ini, jadi tidak ada revisi baru.')
+    if (!next) return notify({ kind: 'info', text: 'Tidak ada perubahan: isi revisi ini sama dengan isi saat ini, jadi tidak ada revisi baru.' })
     const seq = revisionsOf(next, kind, id)[0].seq
     const extra = prompt ? ` ${auditImpactMessage(next, id)}` : ''
     commit(next, `Isi dikembalikan dari revisi #${sel.seq} dan dicatat sebagai revisi #${seq}. Revisi lama tetap ada.${extra}`)
@@ -56,7 +56,7 @@ export function History({ kind, id }: { kind: Kind; id: string }) {
             {revs.map((r) => (
               <li key={r.id}>
                 <button className="rev" aria-pressed={r.id === sel.id} onClick={() => setSelectedId(r.id)}>
-                  <strong>Revisi #{r.seq}</strong> · {actionLabel(r)}
+                  <span><strong>Revisi #{r.seq}</strong> · {actionLabel(r)}</span>
                   <span className="muted small">{formatTime(r.at)} · {r.by}</span>
                   {sameSnapshot(r, cur) && <span className="badge badge-current">Sama dengan isi saat ini</span>}
                 </button>
