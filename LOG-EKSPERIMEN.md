@@ -55,6 +55,10 @@ Agent menyatakan selesai pukul 02:29 WIB (2026-11-21). Waktu kerja aktif agent s
 
 Verifikasi ulang oleh peneliti di mesin yang sama, 2026-11-21: `npm ci` berhasil, `npm test` 11 dari 11 test lolos (1 file test), `npm run build` berhasil tanpa error.
 
+### Catatan histori commit
+
+Atas permintaan pemilik repo (21 November 2026), baris "Co-Authored-By" yang diminta di aturan nomor 4 dihapus dari semua pesan commit, sehingga commit hanya tercatat atas nama pemilik repo. Isi file, urutan, dan waktu commit tidak berubah. Pemakaian AI coding agent tetap tercatat di log ini.
+
 ## Iterasi agent
 
 Bagian ini ditulis agent setiap selesai satu iterasi: waktu, tujuan, file yang berubah, masalah, dan hasil build/test.
