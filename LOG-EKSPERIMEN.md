@@ -52,3 +52,29 @@ Jeda ini tidak dihitung sebagai waktu pengembangan dan tidak dihitung sebagai re
 ## Iterasi agent
 
 Bagian ini ditulis agent setiap selesai satu iterasi: waktu, tujuan, file yang berubah, masalah, dan hasil build/test.
+
+### Iterasi 1: kerangka aplikasi dan semua fitur inti
+
+- Mulai: 2026-11-20 22:03
+- Selesai: 2026-11-20 22:12 (build dan test lolos). Terhenti karena batas pemakaian API sebelum sempat dicatat; entri ini dan commit-nya ditulis 2026-11-21 02:24 tanpa perubahan kode.
+- Tujuan: membangun aplikasi sesuai PRD (FR-01 sampai FR-06) dengan React, Vite, TypeScript, dan localStorage.
+- File yang berubah: package.json, package-lock.json, tsconfig.json, vite.config.ts, index.html, src/main.tsx, src/App.tsx, src/app-context.ts, src/store.ts, src/diff.ts, src/ui.tsx, src/CrmPages.tsx, src/Prompts.tsx, src/History.tsx, src/styles.css, src/logic.test.ts.
+- Yang dibangun:
+  - Daftar CRM Page per client, kartu versi (nomor, status berteks, nama file, waktu dan pengubah terakhir, tombol Upload dan Riwayat).
+  - Upload dengan validasi (.html/.htm, tidak kosong, maksimal 500 KB), ringkasan sebelum diganti, Batal tanpa perubahan, dan konfirmasi tegas (ketik nomor versi, tombol merah) untuk versi Published.
+  - Daftar Saved Prompt dengan jumlah audit pemakai atau keterangan "Tidak dipakai audit"; halaman ubah prompt dengan validasi nama/isi, panel "Dipakai oleh Continuous Audit", dan pesan simpan yang menyebut audit terdampak.
+  - Riwayat untuk prompt dan versi: daftar revisi terbaru di atas, isi lengkap sebagai teks, perbandingan per baris (+ ditambah, − dihapus), dan Kembalikan yang membuat revisi baru "dikembalikan dari revisi #n" (konfirmasi tegas bila versi Published).
+  - Data contoh fiktif (2 client, 5 prompt termasuk duplikat "Audit Follow-up Sales - v2" yang tidak dipakai, 5 audit, 1 CRM Page dengan v1 Archived, v2 Published, v3 Draft), penyimpanan localStorage, pesan gagal simpan, dan "Atur ulang data contoh" dengan konfirmasi.
+  - Halaman Continuous Audit hanya-baca sebagai tiruan secukupnya.
+- Keputusan yang diambil sendiri (tidak ada yang bisa ditanya):
+  - Hash routing (#/...) dan `base: './'` di Vite, supaya memuat ulang halaman di subpath GitHub Pages tidak 404 tanpa trik 404.html.
+  - Tidak memakai react-router atau library diff; perbandingan memakai algoritma Myers sendiri dengan batas 3000 suntingan (di atas itu bagian tengah ditampilkan sebagai dihapus lalu ditambah) supaya isi 500 KB tidak membuat halaman macet.
+  - 500 KB = 512.000 byte (500 × 1024). File "kosong" = 0 byte atau hanya berisi spasi/baris kosong.
+  - Nomor versi yang diketik tidak membedakan huruf besar/kecil ("V2" sama dengan "v2").
+  - "Isi sama persis" (BR-9) berarti nama (nama prompt atau nama file) dan isinya sama; tidak ada revisi baru dan pengguna diberi tahu.
+  - Pesan simpan prompt juga menyebut audit berstatus Dijeda, dengan keterangan "sedang dijeda".
+  - Perbandingan dibaca dari revisi terpilih ke isi saat ini; baris sama yang jauh dari perubahan disembunyikan (3 baris konteks).
+  - Setiap prompt dan versi di data contoh punya revisi #1 "dibuat", ditambah satu revisi lanjutan pada PRM-1001 dan v2 agar perbandingan bisa langsung dicoba.
+  - Modal memakai elemen `<dialog>` bawaan browser (showModal) untuk menahan fokus dan menutup dengan Esc.
+- Masalah: tidak ada yang menghambat. Satu baris di diff.ts sempat ditulis terlalu ringkas lalu diperjelas sebelum build.
+- Hasil build/test: `npm run build` lolos (tsc tanpa error, bundel JS 248,6 kB / gzip 77,6 kB). `npm test` lolos 11 dari 11 test (diff, validasi file, revisi, pengembalian, pesan audit, data contoh). Tampilan belum diperiksa di browser.
