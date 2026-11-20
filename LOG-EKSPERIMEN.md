@@ -101,3 +101,18 @@ Bagian ini ditulis agent setiap selesai satu iterasi: waktu, tujuan, file yang b
 - Belum diperbaiki (dinilai kecil): setelah Kembalikan, tombol pembukanya menjadi nonaktif sehingga fokus keyboard kembali ke awal halaman, bukan ke tombol.
 - File yang berubah: src/app-context.ts, src/App.tsx, src/CrmPages.tsx, src/Prompts.tsx, src/History.tsx, src/store.ts, src/styles.css, LOG-EKSPERIMEN.md.
 - Hasil build/test: `npm run build` lolos, `npm test` lolos 11 dari 11.
+
+### Iterasi 3: siap GitHub Pages, uji build produksi di subpath, performa, dan kontras
+
+- Mulai: 2026-11-21 02:27
+- Selesai: 2026-11-21 02:29
+- Tujuan: memastikan aplikasi bisa dihosting di GitHub Pages pada subpath nama repo (NFR-07, kriteria penerimaan 11) dan memeriksa NFR-01 serta NFR-06.
+- Yang dikerjakan:
+  - Menambah workflow GitHub Actions `.github/workflows/deploy.yml`: setiap push ke main menjalankan `npm ci`, `npm test`, `npm run build`, lalu menerbitkan folder dist ke GitHub Pages. Peneliti perlu memilih Settings > Pages > Source: GitHub Actions setelah push.
+  - Menyajikan hasil build di http://localhost:5181/autoaudit-ws12-prd-only/ dengan server statis tanpa fallback SPA (meniru GitHub Pages). Membuka langsung dan memuat ulang #/riwayat/prompt/PRM-1001 di subpath itu berhasil; aset termuat lewat path relatif.
+  - Uji performa di build produksi dengan file ±503 KB (9.500 baris): perbandingan dua file besar dengan 3 baris berubah dirender sekitar 30 ms; perbandingan file besar dengan file kecil (9.500 baris berbeda) sekitar 200 ms. Halaman tidak macet.
+  - Rasio kontras 18 pasangan warna utama dihitung: terendah 4,78:1 (tombol nonaktif), lainnya 6,19:1 sampai 14,46:1. Semua memenuhi WCAG AA.
+  - Data uji di localStorage browser dihapus, server statis dan dev server dimatikan (port 5181 bebas).
+- Masalah: pengukuran pertama memakai requestAnimationFrame dan macet karena panel browser sedang tersembunyi; diganti pengukuran berbasis microtask. Upload dua file ±500 KB membuat data tersimpan sekitar 1,5 MB karena isi file disimpan di versi dan di setiap revisi; dengan batas localStorage sekitar 5 MB, kira-kira 8 sampai 9 unggahan file sebesar itu sebelum muncul pesan "Gagal menyimpan". Sesuai asumsi PRD bahwa file dashboard kecil, ini tidak diubah.
+- File yang berubah: .github/workflows/deploy.yml, LOG-EKSPERIMEN.md.
+- Hasil build/test: `npm run build` lolos, `npm test` lolos 11 dari 11.
