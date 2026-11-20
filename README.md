@@ -33,7 +33,7 @@ Eksperimen A dan B memakai AI yang sama, yaitu Claude Code dengan model Claude O
 
 ## Menjalankan di komputer sendiri
 
-Butuh Node.js 20 atau lebih baru.
+Butuh Node.js 20.19 atau lebih baru (syarat Vite 8).
 
 ```bash
 npm install
